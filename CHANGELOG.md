@@ -2,6 +2,9 @@
 
 The 7Pass iOS SDK follows [SemVer](http://semver.org/).
 
+- 3.0.0 (2017-05-10)
+  - Stripped authentication part
+
 - 2.0.0 (2016-11-07)
   - Compatibility updates for Swift 3.0.1
 

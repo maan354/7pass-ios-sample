@@ -7,14 +7,26 @@
 //
 
 import UIKit
+import AppAuth
+import SevenPassSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        return true
+    var serviceConfiguration: OIDServiceConfiguration?
+    var currentAuthorizationFlow: OIDAuthorizationFlowSession?
+    var authState: OIDAuthState?
+    var accountClient: SevenPassClient?
+    
+    func application(_ app: UIApplication, open url: URL, options:  [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        // Sends the URL to the current authorization flow (if any) which will process it if it relates to
+        // an authorization response.
+        if let currentAuthorizationFlow = currentAuthorizationFlow, currentAuthorizationFlow.resumeAuthorizationFlow(with: url) {
+            self.currentAuthorizationFlow = nil
+            return true
+        }
+        return false;
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

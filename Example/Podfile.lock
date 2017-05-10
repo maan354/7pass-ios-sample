@@ -1,17 +1,17 @@
 PODS:
-  - CryptoSwift (0.6.4)
-  - JSONWebToken (2.0.1):
-    - CryptoSwift (~> 0.6.0)
+  - Alamofire (4.4.0)
+  - AppAuth (0.8.0)
+  - CryptoSwift (0.6.7)
   - JWTDecode (2.0.0)
-  - Locksmith (3.0.0)
   - Nimble (5.1.0)
   - Quick (0.10.0)
-  - SevenPassSDK (2.0.0):
-    - JSONWebToken (~> 2.0.1)
-    - JWTDecode (~> 2.0)
-    - Locksmith (~> 3.0)
+  - SevenPassSDK (3.0.0):
+    - Alamofire (~> 4.4)
+    - AppAuth (~> 0.8)
+    - CryptoSwift (~> 0.6)
 
 DEPENDENCIES:
+  - JWTDecode (~> 2.0.0)
   - Nimble (~> 5.1.0)
   - Quick (~> 0.10.0)
   - SevenPassSDK (from `../`)
@@ -21,14 +21,14 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CryptoSwift: 2cb9a11b942b443ca3316bdac2733ed6c6e16d4e
-  JSONWebToken: 37f3666c459ed1a1554663a2741ac7655d488b1f
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  AppAuth: 37b3235b3c3da8f4f070a09dab5a7d15276decc3
+  CryptoSwift: 685ae257941e5447474348a2b545583e1a16b573
   JWTDecode: 178e47e5d28d3abcff778bacced8342858cd6cb5
-  Locksmith: 310b4cc5031af5728bf4db5d4de547a5100c6a3b
   Nimble: 5ea121a2eda60440287054cde077fc0ad22227b3
   Quick: 5d290df1c69d5ee2f0729956dcf0fd9a30447eaa
-  SevenPassSDK: 27e0a890b0e6a8eb873fbb6e310e11c73b9a150c
+  SevenPassSDK: 2e9b085862550a339b2edd9099bdb49a68dcabd5
 
-PODFILE CHECKSUM: 988aba46abb97cfdef96d568d7efbed2455fd47b
+PODFILE CHECKSUM: 58835f6fb5e2f394aa97eba0cd08221a2c2d98cd
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.0

@@ -1,5 +1,0 @@
-# We're using AwesomeCache from Carthage, because 4.0.0 is not published to
-# CocoaPods and does not include "Added @escaping to setObject method" patch
-# (https://github.com/EmilYo/AwesomeCache/commit/2d06605f1574468a8e0f791d0cb45c8494bce609)
-github "EmilYo/AwesomeCache" "master"
-github "p7s1-ctf/OAuthSwift" "p7-changes-p2"

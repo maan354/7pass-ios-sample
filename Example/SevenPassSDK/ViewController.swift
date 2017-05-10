@@ -7,97 +7,83 @@
 //
 
 import UIKit
+import JWTDecode
+import AppAuth
+import SevenPassSDK
 
-class ViewController: UIViewController, UITabBarDelegate {
-    @IBOutlet weak var loginContentView: UIView!
-    @IBOutlet weak var tabBarView: UITabBar!
+class ViewController: UIViewController {
     @IBOutlet weak var refreshButton: UIBarButtonItem!
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     @IBOutlet weak var statusbar: UIBarButtonItem!
     
-    fileprivate var activeViewController: UIViewController? {
-        didSet {
-            removeInactiveViewController(oldValue)
-            updateActiveViewController()
-        }
-    }
-    
+    let config = Configuration.shared
+        
     @IBAction func refresh(_ sender: AnyObject) {
-        if let refreshTokenString = SsoManager.sharedInstance.tokenSet?.refreshToken?.token {
-            SsoManager.sharedInstance.sso.authorize(refreshToken: refreshTokenString,
-                success: { tokenSet in
-                    SsoManager.sharedInstance.updateTokenSet(tokenSet)
-                },
-                failure: errorHandler
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
+        
+        if let authState = appDelegate.authState {
+            let tokenExchangeRequest = OIDTokenRequest(
+                configuration: authState.lastAuthorizationResponse.request.configuration,
+                grantType: OIDGrantTypeRefreshToken,
+                authorizationCode: nil,
+                redirectURL: URL(string: config.kRedirectURI)!,
+                clientID: config.kClientId,
+                clientSecret: nil,
+                scope: nil,
+                refreshToken: authState.refreshToken,
+                codeVerifier: nil,
+                additionalParameters: nil
             )
+                        
+            OIDAuthorizationService.perform(tokenExchangeRequest!) {
+                tokenResponse, error in
+                if let error = error {
+                    print("Error during authorization: \(error.localizedDescription)")
+                }
+                
+                if let tokenResponse = tokenResponse {
+                    authState.update(with: tokenResponse, error: error)
+                    self.updateStatusbar()
+                }
+            }
         }
     }
 
     @IBAction func logout(_ sender: AnyObject) {
-        SsoManager.sharedInstance.updateTokenSet(nil)
-        SsoManager.sharedInstance.sso.destroyWebviewSession(failure: errorHandler)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
+        let config = Configuration.shared
 
-        updateStatusbar()
-    }
-
-    fileprivate func removeInactiveViewController(_ inactiveViewController: UIViewController?) {
-        if let inActiveVC = inactiveViewController {
-            // call before removing child view controller's view from hierarchy
-            inActiveVC.willMove(toParentViewController: nil)
-            
-            inActiveVC.view.removeFromSuperview()
-            
-            // call after removing child view controller's view from hierarchy
-            inActiveVC.removeFromParentViewController()
+        if let authState = appDelegate.authState {
+            appDelegate.currentAuthorizationFlow = SevenPassClient.logout(clientId: config.kClientId, postLogoutRedirectUri: config.kPostLogoutRedirectURI, presenting: self, authState: authState) { response, error in
+                
+                print("Logged out")
+            }
+            appDelegate.authState = nil
         }
-    }
-    
-    fileprivate func updateActiveViewController() {
-        if let activeVC = activeViewController {
-            // call before adding child view controller's view as subview
-            addChildViewController(activeVC)
-            
-            activeVC.view.frame = loginContentView.bounds
-            loginContentView.addSubview(activeVC.view)
-            
-            // call before adding child view controller's view as subview
-            activeVC.didMove(toParentViewController: self)
-        }
-    }
-    
-    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        activeViewController = loginViews[item.tag]
-    }
-    
-    var loginViews: [UIViewController] = []
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
-        let webViewController = storyboard!.instantiateViewController(withIdentifier: "webView")
-        let passwordLoginController = storyboard!.instantiateViewController(withIdentifier: "passwordLogin")
-        let registrationController = storyboard!.instantiateViewController(withIdentifier: "registrationView")
-
-        loginViews = [webViewController, passwordLoginController, registrationController]
-
-        // Select first tab
-        activeViewController = webViewController
-        tabBarView.selectedItem = tabBarView.items![0]
-
         updateStatusbar()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
     func updateStatusbar() {
-        if let tokenSet = SsoManager.sharedInstance.tokenSet {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
+        
+        if let authState = appDelegate.authState {
             logoutButton.isEnabled = true
-            refreshButton.isEnabled = true
-            statusbar.title = tokenSet.email
+            
+            if authState.refreshToken != nil {
+                refreshButton.isEnabled = true
+            }
+            
+            if let idToken = authState.lastTokenResponse?.idToken {
+                do {
+                    let decoded = try JWTDecode.decode(jwt: idToken)
+                    if let email = decoded.body["email"] as? String {
+                        statusbar.title = email
+                    }
+                } catch {
+                    print("Cannot decode idToken");                    
+                }
+            }
         } else {
             logoutButton.isEnabled = false
             refreshButton.isEnabled = false

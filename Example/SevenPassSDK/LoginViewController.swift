@@ -8,107 +8,105 @@
 
 import UIKit
 import SevenPassSDK
+import AppAuth
+import Alamofire
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
-    @IBOutlet weak var login: UITextField!
-    @IBOutlet weak var password: UITextField!
-
-    let sso = SsoManager.sharedInstance.sso
+    let config = Configuration.shared
     var mainView: ViewController?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-
+    
+    override func didMove(toParentViewController parent: UIViewController?) {
+        super.didMove(toParentViewController: parent)
+        
         mainView = parent as? ViewController
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+ 
     @IBAction func webview(_ sender: AnyObject) {
-        sso.authorize(
-            scopes: ["openid", "profile", "email"],
-            success: { tokenSet in
-                self.updateTokenSet(tokenSet)
-                self.request()
-            },
-            failure: errorHandler
-        )
-    }
+        let issuer = URL(string: config.kIssuer)!
+        
 
-    @IBAction func autologin(_ sender: AnyObject) {
-        if let tokenSet = SsoManager.sharedInstance.tokenSet {
-            sso.autologin(tokenSet,
-                scopes: ["openid", "profile", "email"],
-                rememberMe: false,
-                success: { token in
-                    showAlert(title: "Autologin", message: "Successfully autologged in")
-                },
-                failure: errorHandler
-            )
-        } else {
-            showAlert(title: "TokenSet missing", message: "Cannot autologin user without tokenSet")
-        }
-    }
+        
+        OIDAuthorizationService.discoverConfiguration(forIssuer: issuer) {
+            serviceConfiguration, error in
+            if let error = error {
+                print("Error retrieving discovery document: \(error.localizedDescription)")
+                return
+            }
+            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate;
 
-    @IBAction func loginPasswordLogin(_ sender: AnyObject) {
-        sso.authorize(login: login.text!, password: password.text!,
-            scopes: ["openid", "profile", "email"],
-            success: { tokenSet in
-                self.updateTokenSet(tokenSet)
-                self.request()
-            },
-            failure: { error in
-                // Let autologin handle interaction_required errors
-                if let errorMessage = error.userInfo["error"] as? String , errorMessage == "interaction_required" {
-                    let autologinToken = error.userInfo["autologin_token"] as! String
-
-                    self.sso.autologin(
-                        autologinToken: autologinToken,
-                        scopes: ["openid", "profile", "email"],
-                        params: ["response_type": "id_token+token"],
-                        success: { tokenSet in
-                            self.updateTokenSet(tokenSet)
-                            self.request()
-                        },
-                        failure: errorHandler
-                    )
-                } else {
-                    errorHandler(error)
+            appDelegate.serviceConfiguration = serviceConfiguration
+            
+            var additionalParams = [String: String]()
+            additionalParams["prompt"] = "consent"
+            
+            let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
+                clientId: self.config.kClientId,
+                clientSecret: nil,
+                scopes: [OIDScopeOpenID, "offline_access", OIDScopeProfile, OIDScopeEmail],
+                redirectURL: URL(string: self.config.kRedirectURI)!,
+                responseType: OIDResponseTypeCode,
+                additionalParameters: additionalParams)
+            
+            appDelegate.currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, presenting: self) {
+                authorizationResponse, error in
+                if let authorizationResponse = authorizationResponse {
+                    appDelegate.authState = OIDAuthState(authorizationResponse: authorizationResponse)
+                    self.exchangeTokens(
+                        authorizationCode: authorizationResponse.authorizationCode,
+                        codeVerifier: authorizationRequest.codeVerifier)
                 }
             }
-        )
+        }
     }
-
-    @IBAction func request(_ sender: AnyObject? = nil) {
-        if let accountClient = SsoManager.sharedInstance.accountClient {
-            accountClient.get("me",
-                success: { json, response in
-                    let accessTokenString = SsoManager.sharedInstance.tokenSet?.accessToken?.token
-
-                    showAlert(title: "GET /api/accounts/me", message: "Access Token: \(accessTokenString)\n\n\(json.description)")
-                },
-                failure: { error in
-                    errorHandler(error)
-                }
+    
+    func exchangeTokens(authorizationCode: String?, codeVerifier: String?) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
+        
+        let tokenExchangeRequest = OIDTokenRequest(
+            configuration: (appDelegate.authState?.lastAuthorizationResponse.request.configuration)!,
+            grantType: OIDGrantTypeAuthorizationCode,
+            authorizationCode: authorizationCode,
+            redirectURL: URL(string: config.kRedirectURI)!,
+            clientID: config.kClientId,
+            clientSecret: nil,
+            scope: nil,
+            refreshToken: nil,
+            codeVerifier: codeVerifier,
+            additionalParameters: nil
             )
-        } else {
-            showAlert(title: "AccountClient missing", message: "Not logged in")
+        
+        OIDAuthorizationService.perform(tokenExchangeRequest!) {
+            tokenResponse, error in
+            if let error = error {
+                print("Error during authorization: \(error.localizedDescription)")
+            }
+            
+            if let tokenResponse = tokenResponse {
+                appDelegate.authState?.update(with: tokenResponse, error: error)
+                self.mainView?.updateStatusbar()
+            }
         }
     }
 
-    func updateTokenSet(_ tokenSet: SevenPassTokenSet) {
-        SsoManager.sharedInstance.updateTokenSet(tokenSet)
-        SsoManager.sharedInstance.setAccountClient()
-        mainView?.updateStatusbar()
-    }
+     @IBAction func request(_ sender: AnyObject? = nil) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        loginPasswordLogin(textField)
+        if let authState = appDelegate.authState {
+            let accountClient = SevenPassClient(authState: authState);
+            appDelegate.accountClient = accountClient
 
-        return true
+            accountClient.get("/me") { response in
+                switch response.result {
+                case .success:
+                    let JSON = response.result.value
+                    showAlert(title: "GET /me", message: "\(JSON)")
+                case .failure(let error):
+                    showAlert(title: "GET /me", message: "Error fetching fresh tokens:\n\(error)")
+                }
+            }
+        } else {
+            showAlert(title: "AuthState is missing", message: "Not logged in")
+        }
     }
 }

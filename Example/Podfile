@@ -3,6 +3,7 @@ use_frameworks!
 
 target 'SevenPassSDK_Example' do
   pod "SevenPassSDK", :path => "../"
+  pod 'JWTDecode', '~> 2.0.0'
 end
 
 target 'SevenPassSDK_Tests' do

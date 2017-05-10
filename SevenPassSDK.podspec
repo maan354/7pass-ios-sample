@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "SevenPassSDK"
-  s.version          = "2.0.0"
+  s.version          = "3.0.0"
   s.summary          = "7Pass SDK to access 7Pass SSO features"
 
 # This description is used to generate tags and improve search results.
@@ -34,13 +34,7 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
   }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  #s.dependency 'CryptoSwift', '~> 0.6.4'
-  #s.dependency 'AwesomeCache', '~> 3.0.1'
-  s.dependency 'Locksmith', '~> 3.0'
-  s.dependency 'JWTDecode', '~> 2.0'
-  s.dependency 'JSONWebToken', '~> 2.0.1'
-
-  s.ios.vendored_frameworks = 'Carthage/Build/iOS/*.framework'
+  s.dependency 'Alamofire', '~> 4.4'
+  s.dependency 'AppAuth', '~> 0.8'
+  s.dependency 'CryptoSwift', '~> 0.6'
 end

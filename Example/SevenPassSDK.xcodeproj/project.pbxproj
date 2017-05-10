@@ -8,14 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		67A2DBDB1C58D31600A5E8A0 /* SevenPassIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A2DBDA1C58D31600A5E8A0 /* SevenPassIntegrationTests.swift */; };
 		7DD7DB8BAA60E4331D420B7D /* Pods_SevenPassSDK_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B458C5078A545138F7FF2708 /* Pods_SevenPassSDK_Example.framework */; };
 		AF19E7662045CB7F1B1E30F1 /* Pods_SevenPassSDK_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5A96C2AD8095AC4D015683D /* Pods_SevenPassSDK_Tests.framework */; };
+		DB6073811EBE312E00443365 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6073801EBE312E00443365 /* Configuration.swift */; };
 		DBE9D9A41C746230003C39C3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D99C1C746230003C39C3 /* AppDelegate.swift */; };
 		DBE9D9A51C746230003C39C3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBE9D99D1C746230003C39C3 /* Images.xcassets */; };
 		DBE9D9A71C746230003C39C3 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D99F1C746230003C39C3 /* LoginViewController.swift */; };
-		DBE9D9A81C746230003C39C3 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D9A01C746230003C39C3 /* RegistrationViewController.swift */; };
-		DBE9D9A91C746230003C39C3 /* SsoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D9A11C746230003C39C3 /* SsoManager.swift */; };
 		DBE9D9AA1C746230003C39C3 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D9A21C746230003C39C3 /* Util.swift */; };
 		DBE9D9AB1C746230003C39C3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D9A31C746230003C39C3 /* ViewController.swift */; };
 		DBE9D9AF1C74629F003C39C3 /* SevenPassSDK.podspec in Resources */ = {isa = PBXBuildFile; fileRef = DBE9D9AE1C74629F003C39C3 /* SevenPassSDK.podspec */; };
@@ -41,16 +39,15 @@
 		607FACE51AFB9204008FA782 /* SevenPassSDK_Example.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SevenPassSDK_Example.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		67A2DBDA1C58D31600A5E8A0 /* SevenPassIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SevenPassIntegrationTests.swift; sourceTree = "<group>"; };
 		70345B3E596D26D6D40178D0 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8F173A962B334DF9E5ADFAD5 /* Pods-SevenPassSDK_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SevenPassSDK_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SevenPassSDK_Tests/Pods-SevenPassSDK_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		90391B29D407AB62F05FEA01 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		B458C5078A545138F7FF2708 /* Pods_SevenPassSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SevenPassSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB303E4A1EBCB8A5006812FB /* SevenPassSDK_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SevenPassSDK_Example.entitlements; sourceTree = "<group>"; };
+		DB6073801EBE312E00443365 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = SevenPassSDK/Configuration.swift; sourceTree = SOURCE_ROOT; };
 		DBE9D99C1C746230003C39C3 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SevenPassSDK/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		DBE9D99D1C746230003C39C3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SevenPassSDK/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		DBE9D99F1C746230003C39C3 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = SevenPassSDK/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
-		DBE9D9A01C746230003C39C3 /* RegistrationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegistrationViewController.swift; path = SevenPassSDK/RegistrationViewController.swift; sourceTree = SOURCE_ROOT; };
-		DBE9D9A11C746230003C39C3 /* SsoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SsoManager.swift; path = SevenPassSDK/SsoManager.swift; sourceTree = SOURCE_ROOT; };
 		DBE9D9A21C746230003C39C3 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Util.swift; path = SevenPassSDK/Util.swift; sourceTree = SOURCE_ROOT; };
 		DBE9D9A31C746230003C39C3 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = SevenPassSDK/ViewController.swift; sourceTree = SOURCE_ROOT; };
 		DBE9D9AC1C746281003C39C3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SevenPassSDK/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -94,6 +91,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				DB303E4A1EBCB8A5006812FB /* SevenPassSDK_Example.entitlements */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for SevenPass */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -116,14 +114,13 @@
 			isa = PBXGroup;
 			children = (
 				DBE9D99C1C746230003C39C3 /* AppDelegate.swift */,
-				DBE9D99D1C746230003C39C3 /* Images.xcassets */,
+				DB6073801EBE312E00443365 /* Configuration.swift */,
 				DBE9D99F1C746230003C39C3 /* LoginViewController.swift */,
-				DBE9D9A01C746230003C39C3 /* RegistrationViewController.swift */,
-				DBE9D9A11C746230003C39C3 /* SsoManager.swift */,
 				DBE9D9A21C746230003C39C3 /* Util.swift */,
 				DBE9D9A31C746230003C39C3 /* ViewController.swift */,
 				DBE9D9B01C7462F8003C39C3 /* LaunchScreen.xib */,
 				DBE9D9B21C7462F8003C39C3 /* Main.storyboard */,
+				DBE9D99D1C746230003C39C3 /* Images.xcassets */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
 			name = "Example for SevenPass";
@@ -141,7 +138,6 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				67A2DBDA1C58D31600A5E8A0 /* SevenPassIntegrationTests.swift */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -233,6 +229,11 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = P652PNJR3E;
 						LastSwiftMigration = 0800;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 0;
+							};
+						};
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -380,9 +381,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBE9D9AA1C746230003C39C3 /* Util.swift in Sources */,
-				DBE9D9A81C746230003C39C3 /* RegistrationViewController.swift in Sources */,
+				DB6073811EBE312E00443365 /* Configuration.swift in Sources */,
 				DBE9D9AB1C746230003C39C3 /* ViewController.swift in Sources */,
-				DBE9D9A91C746230003C39C3 /* SsoManager.swift in Sources */,
 				DBE9D9A71C746230003C39C3 /* LoginViewController.swift in Sources */,
 				DBE9D9A41C746230003C39C3 /* AppDelegate.swift in Sources */,
 			);
@@ -393,7 +393,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
-				67A2DBDB1C58D31600A5E8A0 /* SevenPassIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
