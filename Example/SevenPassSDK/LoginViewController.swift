@@ -24,8 +24,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBAction func authorize(_ sender: AnyObject) {
         let issuer = URL(string: config.kIssuer)!
         
-
-        
         OIDAuthorizationService.discoverConfiguration(forIssuer: issuer) {
             serviceConfiguration, error in
             if let error = error {
