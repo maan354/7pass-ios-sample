@@ -174,7 +174,7 @@ Once you have the `authorizationResponse` you can perform the token exchange req
  }
 ```
 
-In `tokenResponse` you will get few of those tokens that are stored in the
+In `tokenResponse` you will get few of following tokens that are stored in the
 `authState`:
 
 1. *Access token* - This token proofs the identity of the user and is
@@ -207,7 +207,7 @@ accountClient.get("/me") { response in
 
 ## How to logout
 
-You can `SevenPassClient.logout` class method that will revoke all of the tokens
+You can use `SevenPassClient.logout` class method that will revoke all of the tokens
 and destroy user session in the WebView. After that, just toss your `authState` away.
 
 ```swift
