@@ -27,7 +27,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         OIDAuthorizationService.discoverConfiguration(forIssuer: issuer) {
             serviceConfiguration, error in
             if let error = error {
-                print("Error retrieving discovery document: \(error.localizedDescription)")
+                showAlert(title: "Error retrieving discovery document", message: error.localizedDescription)
                 return
             }
             
@@ -77,7 +77,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         OIDAuthorizationService.perform(tokenExchangeRequest!) {
             tokenResponse, error in
             if let error = error {
-                print("Error during authorization: \(error.localizedDescription)")
+                showAlert(title: "Error during authorization", message: error.localizedDescription)
             }
             
             if let tokenResponse = tokenResponse {

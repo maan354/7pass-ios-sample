@@ -38,7 +38,7 @@ class ViewController: UIViewController {
             OIDAuthorizationService.perform(tokenExchangeRequest!) {
                 tokenResponse, error in
                 if let error = error {
-                    print("Error during authorization: \(error.localizedDescription)")
+                    showAlert(title: "Error during token refresh", message: error.localizedDescription)
                 }
                 
                 if let tokenResponse = tokenResponse {
@@ -57,12 +57,10 @@ class ViewController: UIViewController {
         if let authState = appDelegate.authState {
             appDelegate.currentAuthorizationFlow = SevenPassClient.logout(clientId: config.kClientId, postLogoutRedirectUri: config.kPostLogoutRedirectURI, presenting: self, authState: authState) { response, error in
                 
-                print("Logged out")
+                appDelegate.authState = nil
+                self.updateStatusbar()
             }
-            appDelegate.authState = nil
         }
-        
-        updateStatusbar()
     }
     
     func updateStatusbar() {
