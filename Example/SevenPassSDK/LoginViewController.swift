@@ -94,7 +94,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         if let userinfoEndpoint = serviceConfiguration?.discoveryDocument?.userinfoEndpoint {
           get(userinfoEndpoint.absoluteString)
         } else {
-            showAlert(title: "Confgiuration is missing", message: "Configuration was not retrieved from the server")
+            showAlert(title: "Configuration is missing", message: "Configuration was not retrieved from the server")
 
         }
     }
