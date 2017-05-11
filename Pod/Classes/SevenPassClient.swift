@@ -78,9 +78,12 @@ open class SevenPassClient {
         self.baseURL = baseURL
     }
     
-    public init(authState: OIDAuthState) {
+    public init(authState: OIDAuthState, baseURL: URL? = nil) {
         self.authState = authState
-        if let lastTokenResponse = authState.lastTokenResponse {
+        
+        if let baseURL = baseURL {
+            self.baseURL = baseURL
+        } else if let lastTokenResponse = authState.lastTokenResponse {
             let configuration = lastTokenResponse.request.configuration
             self.baseURL = configuration.discoveryDocument?.issuer
         }
@@ -104,8 +107,8 @@ open class SevenPassClient {
         var urlString = urlString
         if let baseURL = baseURL {
             urlString = URL(string: urlString, relativeTo: self.baseURL)!.absoluteString
-        }
-        
+        }        
+
         Alamofire.request(urlString, method: method, parameters: parameters, headers: headers).responseJSON(completionHandler: completionHandler)
         
         return self

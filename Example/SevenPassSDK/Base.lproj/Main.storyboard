@@ -30,19 +30,29 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D6n-r7-IF2">
-                                <rect key="frame" x="111" y="115" width="98" height="39"/>
+                                <rect key="frame" x="98" y="113" width="124" height="39"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                <state key="normal" title="Fetch /me"/>
+                                <state key="normal" title="Get UserInfo"/>
                                 <connections>
-                                    <action selector="request:" destination="lzC-bg-seg" eventType="touchUpInside" id="oD1-aB-tE3"/>
+                                    <action selector="fetchUserInfo:" destination="lzC-bg-seg" eventType="touchUpInside" id="JWc-OL-5fO"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gxY-bh-bDP">
+                                <rect key="frame" x="81" y="169" width="159" height="39"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Fetch me/optins"/>
+                                <connections>
+                                    <action selector="fetchOptins:" destination="lzC-bg-seg" eventType="touchUpInside" id="6x2-01-cXp"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="gxY-bh-bDP" firstAttribute="top" secondItem="D6n-r7-IF2" secondAttribute="bottom" constant="20" id="2kt-Di-ddg"/>
                             <constraint firstItem="mj9-9e-sXO" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="He1-uL-zpl"/>
+                            <constraint firstItem="gxY-bh-bDP" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="MR0-4K-fxb"/>
                             <constraint firstItem="D6n-r7-IF2" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="N0n-uM-fZQ"/>
-                            <constraint firstItem="D6n-r7-IF2" firstAttribute="top" secondItem="mj9-9e-sXO" secondAttribute="bottom" constant="22" id="NXE-v7-sN0"/>
+                            <constraint firstItem="D6n-r7-IF2" firstAttribute="top" secondItem="mj9-9e-sXO" secondAttribute="bottom" constant="20" id="NXE-v7-sN0"/>
                             <constraint firstItem="mj9-9e-sXO" firstAttribute="top" secondItem="k4d-hE-UNK" secondAttribute="bottom" constant="54" id="Xaa-8A-17e"/>
                         </constraints>
                     </view>

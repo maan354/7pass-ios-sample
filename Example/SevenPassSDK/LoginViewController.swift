@@ -86,21 +86,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
+    
+    @IBAction func fetchUserInfo(_ sender: AnyObject? = nil) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
+        let serviceConfiguration = appDelegate.serviceConfiguration
+        
+        if let userinfoEndpoint = serviceConfiguration?.discoveryDocument?.userinfoEndpoint {
+          get(userinfoEndpoint.absoluteString)
+        } else {
+            showAlert(title: "Confgiuration is missing", message: "Configuration was not retrieved from the server")
 
-     @IBAction func request(_ sender: AnyObject? = nil) {
+        }
+    }
+
+    @IBAction func fetchOptins(_ sender: Any) {
+        get("me/optins")
+    }
+
+    func get(_ url: String) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
 
         if let authState = appDelegate.authState {
-            let accountClient = SevenPassClient(authState: authState);
+            let accountClient = SevenPassClient(authState: authState, baseURL: URL(string: config.kBaseURL));
             appDelegate.accountClient = accountClient
 
-            accountClient.get("/me") { response in
+            accountClient.get(url) { response in
                 switch response.result {
                 case .success:
                     let JSON = response.result.value
-                    showAlert(title: "GET /me", message: "\(JSON)")
+                    showAlert(title: "GET \(url)", message: "\(JSON)")
                 case .failure(let error):
-                    showAlert(title: "GET /me", message: "Error fetching fresh tokens:\n\(error)")
+                    showAlert(title: "GET \(url)", message: "Error fetching fresh tokens:\n\(error)")
                 }
             }
         } else {

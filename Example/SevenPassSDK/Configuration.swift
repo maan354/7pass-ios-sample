@@ -13,6 +13,7 @@ final class Configuration {
     static let shared = Configuration()
     
     let kIssuer = "https://op.qa.7pass.ctf.prosiebensat1.com"
+    let kBaseURL = "https://sso.qa.7pass.ctf.prosiebensat1.com/api/accounts/"
     let kClientId = "5913340f857a8245576ca7fd"
     let kRedirectURI = "de.7pass.example:/cb/authz"
     let kPostLogoutRedirectURI = "de.7pass.example:/cb/end_session"
