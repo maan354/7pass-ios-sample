@@ -37,8 +37,8 @@
                                     <action selector="fetchUserInfo:" destination="lzC-bg-seg" eventType="touchUpInside" id="JWc-OL-5fO"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gxY-bh-bDP">
-                                <rect key="frame" x="81" y="169" width="159" height="39"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gxY-bh-bDP">
+                                <rect key="frame" x="81" y="172" width="159" height="39"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <state key="normal" title="Fetch me/optins"/>
                                 <connections>
