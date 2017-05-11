@@ -44,6 +44,7 @@ class ViewController: UIViewController {
                 if let tokenResponse = tokenResponse {
                     authState.update(with: tokenResponse, error: error)
                     self.updateStatusbar()
+                    showAlert(title: "Refresh Tokens", message: "Tokens we're successfully refreshed.")
                 }
             }
         }
