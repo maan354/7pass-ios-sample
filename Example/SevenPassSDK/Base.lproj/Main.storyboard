@@ -22,11 +22,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="mj9-9e-sXO">
-                                <rect key="frame" x="55" y="54" width="210" height="39"/>
+                                <rect key="frame" x="113" y="54" width="94" height="39"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                <state key="normal" title="Login using WebView"/>
+                                <state key="normal" title="Authorize"/>
                                 <connections>
-                                    <action selector="webview:" destination="lzC-bg-seg" eventType="touchUpInside" id="ozD-av-Yoe"/>
+                                    <action selector="authorize:" destination="lzC-bg-seg" eventType="touchUpInside" id="h7d-Yn-ou6"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D6n-r7-IF2">
@@ -54,7 +54,6 @@
         <!--Main View-->
         <scene sceneID="dll-eS-ppK">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="emw-19-cAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="6Ud-mc-X6k" userLabel="Main View" customClass="ViewController" customModule="SevenPassSDK_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="nU8-jI-lFg"/>
@@ -107,6 +106,7 @@
                         <outlet property="statusbar" destination="flI-Ut-GID" id="8JG-kv-LVr"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="emw-19-cAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="305.79710144927537" y="250.27173913043481"/>
         </scene>

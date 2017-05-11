@@ -21,7 +21,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         mainView = parent as? ViewController
     }
  
-    @IBAction func webview(_ sender: AnyObject) {
+    @IBAction func authorize(_ sender: AnyObject) {
         let issuer = URL(string: config.kIssuer)!
         
 
