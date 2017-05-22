@@ -17,4 +17,7 @@ final class Configuration {
     let kClientId = "5913340f857a8245576ca7fd"
     let kRedirectURI = "de.7pass.example:/cb/authz"
     let kPostLogoutRedirectURI = "de.7pass.example:/cb/end_session"
+    
+    let kExternalCallbackURL = "https://interaction.qa.7pass.ctf.prosiebensat1.com/externals/callback"
+    let kFacebookAppId = "734789116545825"
 }

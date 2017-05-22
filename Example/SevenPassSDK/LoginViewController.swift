@@ -35,8 +35,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
             appDelegate.serviceConfiguration = serviceConfiguration
             
-            var additionalParams = [String: String]()
-            additionalParams["prompt"] = "consent"
+            let additionalParams = [
+                "prompt": "consent",
+                "fbapp_pres": SevenPassClient.isFacebookAppInstalled() ? "1" : "0"
+            ]
             
             let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
                 clientId: self.config.kClientId,
@@ -46,7 +48,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 responseType: OIDResponseTypeCode,
                 additionalParameters: additionalParams)
             
-            appDelegate.currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, presenting: self) {
+            let coordinator = OIDAuthorizationUICoordinatorIOS(presenting: self)
+            appDelegate.authorizationCoordinator = coordinator
+
+            appDelegate.currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, uiCoordinator: coordinator!) {
                 authorizationResponse, error in
                 if let authorizationResponse = authorizationResponse {
                     appDelegate.authState = OIDAuthState(authorizationResponse: authorizationResponse)

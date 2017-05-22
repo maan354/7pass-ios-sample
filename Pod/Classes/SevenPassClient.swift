@@ -10,7 +10,54 @@ import AppAuth
 import Alamofire
 import CryptoSwift
 
+extension URL {
+    public var queryItems: [String: String] {
+        var params = [String: String]()
+        return URLComponents(url: self, resolvingAgainstBaseURL: false)?
+            .queryItems?
+            .reduce([:], { (_, item) -> [String: String] in
+                params[item.name] = item.value
+                return params
+            }) ?? [:]
+    }
+}
+
 open class SevenPassClient {
+    open static func isFacebookAppInstalled() -> Bool {
+        return UIApplication.shared.canOpenURL(URL(string: "fbauth2://")!)
+    }
+    
+    open static func fbCallback(
+        _ callbackUrl: String,
+        coordinator: OIDAuthorizationUICoordinator,
+        flow: OIDAuthorizationFlowSession,
+        url: URL) {
+        
+        var state = url.queryItems["state"]
+        var code = url.queryItems["code"]
+        var appType = "web"
+        
+        // Code/state from native app is inside fragments
+        if state == nil {
+            var url = url
+            url = URL(string: url.absoluteString.replacingOccurrences(of: "#", with: "?"))!
+
+            state = url.queryItems["state"]
+            code = url.queryItems["code"]
+            
+            appType = "native"
+        }
+
+        if let code = code, let state = state {
+            let callback = "\(callbackUrl)?code=\(code)&state=\(state)&fbapp_type=\(appType)"
+        
+            coordinator.dismissAuthorization(animated: false) {
+                coordinator.presentAuthorization(with: URL(string: callback)!, session: flow)
+            }
+        }
+    }
+
+    
     open static func logout(clientId: String,
                             postLogoutRedirectUri: String,
                             presenting: UIViewController,

@@ -12,21 +12,34 @@ import SevenPassSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    let config = Configuration.shared
     var window: UIWindow?
 
     var serviceConfiguration: OIDServiceConfiguration?
     var currentAuthorizationFlow: OIDAuthorizationFlowSession?
     var authState: OIDAuthState?
     var accountClient: SevenPassClient?
+    var authorizationCoordinator: OIDAuthorizationUICoordinator?
     
     func application(_ app: UIApplication, open url: URL, options:  [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        // Handle facebook redirect
+        if let urlScheme = url.scheme, urlScheme.hasPrefix("fb\(config.kFacebookAppId)"),
+           let coordinator = authorizationCoordinator,
+           let flow = currentAuthorizationFlow { // facebook
+            
+            SevenPassClient.fbCallback(config.kExternalCallbackURL, coordinator: coordinator, flow: flow, url: url)
+
+            return true
+        }
+
+        if let currentAuthorizationFlow = currentAuthorizationFlow, currentAuthorizationFlow.resumeAuthorizationFlow(with: url) {
         // Sends the URL to the current authorization flow (if any) which will process it if it relates to
         // an authorization response.
-        if let currentAuthorizationFlow = currentAuthorizationFlow, currentAuthorizationFlow.resumeAuthorizationFlow(with: url) {
             self.currentAuthorizationFlow = nil
             return true
         }
-        return false;
+        
+        return false
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -50,7 +63,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
 
