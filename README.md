@@ -214,6 +214,60 @@ and destroy user session in the WebView. After that, just toss your `authState` 
 SevenPassClient.logout(clientId: kClientId, postLogoutRedirectUri: kRedirectURI, presenting: self, authState: authState)
 ```
 
+## Facebook login with native app
+
+User can be signed in through native Facebook app instead of an WebView.
+
+Add `fbauth2` to your `LSApplicationQueriesSchemes` in your `Info.plist`
+```xml
+<key>LSApplicationQueriesSchemes</key>
+<array>
+        <string>fbauth2</string>
+</array>
+```
+
+After that, add `fbYOUR_FACEBOOK_APP_ID` into your URL types, fe. `fb734789116545825`.
+Edit your authorization, so it sends info about if the `Facebook.app` is available
+on user's device.
+
+```swift
+let additionalParams = [
+    "fbapp_pres": SevenPassClient.isFacebookAppInstalled() ? "1" : "0"
+]
+
+let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
+            clientId: kClientID,
+            scopes: [OIDScopeOpenID, OIDScopeProfile],
+            redirectURL: NSURL(string: kRedirectURI),
+            responseType: OIDResponseTypeCode,
+            additionalParameters: additionalParams
+```
+
+That authorization request has to be presented with custom `OIDAuthorizationUICoordinator`,
+please save reference to that coordinator for later use, when we will initiate callback
+with Facebook authorization code to 7Pass.
+
+```swift
+let coordinator = OIDAuthorizationUICoordinatorIOS(presenting: self)
+
+currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, uiCoordinator: coordinator) {
+    authorizationResponse, error in
+}
+```
+
+And in your `AppDelegate` URL open handler add following to handle redirect from Facebook:
+
+```swift
+if let urlScheme = url.scheme, urlScheme.hasPrefix("fb\(config.kFacebookAppId)"),
+   let coordinator = authorizationCoordinator,
+   let flow = currentAuthorizationFlow {
+
+    SevenPassClient.fbCallback(config.kExternalCallbackURL, coordinator: coordinator, flow: flow, url: url)
+
+    return true
+}
+```
+
 ## License
 
 SevenPassSDK is available under the MIT license. See the LICENSE file for more info.
