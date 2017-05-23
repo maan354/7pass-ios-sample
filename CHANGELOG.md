@@ -2,6 +2,10 @@
 
 The 7Pass iOS SDK follows [SemVer](http://semver.org/).
 
+- 4.0.0 (2017-05-23)
+  - Rewrite to sample app
+  - Add native Facebook app login example
+
 - 3.0.0 (2017-05-10)
   - Stripped authentication part
 
