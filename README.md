@@ -1,49 +1,25 @@
-# 7pass-ios-sdk
+# 7pass-ios-sample
 
-7Pass iOS SDK is a Swift library for interacting with the
-[7Pass SSO service](https://7pass.de) using tokens obtained by [AppAuth](https://github.com/openid/AppAuth-iOS). You can use this library as a
-helper to make request to 7Pass SSO.
+7Pass iOS Sample is a Swift project to demonstrate how to access
+[7Pass SSO service](https://7pass.de) using tokens obtained by [AppAuth](https://github.com/openid/AppAuth-iOS).
 
 ## Usage
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+To run the example project, clone the repo, and run `pod install` first.
 
-## Installation
+## Running
 
-SevenPassSDK is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following lines to your Podfile:
-
-```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-
-use_frameworks!
-
-target 'MyApp' do
-  pod 'AppAuth'
-  pod 'SevenPassSDK'
-end
-```
-
-## Running the sample application
-
-To demonstrate the functionality of the library, there's a sample
-application available. The application is configured to run against
-the QA instance of 7Pass and uses test credentials
-(Example/SevenPassSDK/Configuration.swift). Feel free to use these credentials
-while testing but you need to obtain real credentials before releasing
-your app.
+Sample application is configured to run against the QA instance of 7Pass and
+uses test credentials (7pass-ios-sample/Configuration.swift). Feel free to use
+these credentials while testing but you need to obtain real credentials before
+releasing your app.
 
 To obtain the real credentials, you first need to contact the 7Pass
 Tech Team.
 
-Once you have the credentials available, you can go ahead and type
-
-```
-pod install
-```
-
-in `Example` directory, open `SevenPassSDK.xcworkspace` project in XCode,
-select `SevenPassSDK-Example` build configuration and run it.
+Once you have the credentials available, you can go ahead and open
+`7pass-ios-sample.xcworkspace` project in XCode, select `7pass-ios-sample` build
+configuration and run it.
 
 The sample application should now start within the configured device
 (or the emulator) and should provide several tabs each implementing a
@@ -109,7 +85,6 @@ func application(_ app: UIApplication, open url: URL, options:  [UIApplicationOp
     return false;
 }
 ```
-
 
 ### Main controller
 Once you obtain `serviceConfiguration`, you can perform the authorization call. First you
@@ -270,4 +245,4 @@ if let urlScheme = url.scheme, urlScheme.hasPrefix("fb\(config.kFacebookAppId)")
 
 ## License
 
-SevenPassSDK is available under the MIT license. See the LICENSE file for more info.
+7pass-ios-sample is available under the MIT license. See the LICENSE file for more info.
