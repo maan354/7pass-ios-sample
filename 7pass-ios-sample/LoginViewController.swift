@@ -9,6 +9,7 @@
 import UIKit
 import AppAuth
 import Alamofire
+//import AdSupport
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     let config = Configuration.shared
@@ -34,10 +35,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
             appDelegate.serviceConfiguration = serviceConfiguration
             
-            let additionalParams = [
+            var additionalParams = [
                 "prompt": "consent",
                 "fbapp_pres": SevenPassClient.isFacebookAppInstalled() ? "1" : "0"
             ]
+
+//            Uncomment for tracking identifier
+//            if let adManager = ASIdentifierManager.shared(), adManager.isAdvertisingTrackingEnabled {
+//                additionalParams["adid"] = adManager.advertisingIdentifier.uuidString
+//            }
             
             let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
                 clientId: self.config.kClientId,
