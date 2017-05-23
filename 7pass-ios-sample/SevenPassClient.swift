@@ -1,9 +1,5 @@
 //
-//  OAuthSwiftClient.swift
-//  OAuthSwift
-//
-//  Created by Dongri Jin on 6/21/14.
-//  Copyright (c) 2014 Dongri Jin. All rights reserved.
+//  SevenPassClient.swift
 //
 
 import AppAuth
@@ -99,7 +95,7 @@ open class SevenPassClient {
         return nil
     }
     
-    open static func revoke(configuration: OIDServiceConfiguration, clientId: String, token: String, tokenType: String) {
+    @discardableResult open static func revoke(configuration: OIDServiceConfiguration, clientId: String, token: String, tokenType: String) -> DataRequest? {
         if let revocationEndpoint = configuration.discoveryDocument?.discoveryDictionary["revocation_endpoint"] as? String {
             let parameters = [
                 "client_id": clientId,
@@ -107,11 +103,13 @@ open class SevenPassClient {
                 "token_type_hint": tokenType
             ]
             
-            Alamofire.request(revocationEndpoint,
+            return Alamofire.request(revocationEndpoint,
                               method: .post,
                               parameters: parameters,
                               encoding: URLEncoding.default)
         }
+        
+        return nil
     }
     
     public typealias CompletionHandler = (DataResponse<Any>) -> Void
@@ -144,7 +142,6 @@ open class SevenPassClient {
         headers: HTTPHeaders? = nil,
         completionHandler: @escaping CompletionHandler) -> Self {
         
-        var parameters = parameters ?? [:]
         var headers = headers ?? [:]
 
         if let accessToken = self.accessToken {
@@ -153,7 +150,7 @@ open class SevenPassClient {
         
         var urlString = urlString
         if let baseURL = baseURL {
-            urlString = URL(string: urlString, relativeTo: self.baseURL)!.absoluteString
+            urlString = URL(string: urlString, relativeTo: baseURL)!.absoluteString
         }        
 
         Alamofire.request(urlString, method: method, parameters: parameters, headers: headers).responseJSON(completionHandler: completionHandler)
@@ -170,6 +167,10 @@ open class SevenPassClient {
         completionHandler: @escaping CompletionHandler) -> Self {
         
         if let authState = self.authState {
+authState.performAction(freshTokens: { accessToken, idToken, error in
+}, additionalRefreshParameters: ["client_secret": "foobarbaz"])
+            
+            
             authState.performAction(freshTokens: {
                 accessToken, idToken, error in
 

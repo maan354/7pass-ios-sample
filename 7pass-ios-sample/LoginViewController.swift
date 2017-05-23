@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SevenPassSDK
 import AppAuth
 import Alamofire
 
@@ -79,7 +78,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             additionalParameters: nil
             )
         
-        OIDAuthorizationService.perform(tokenExchangeRequest!) {
+        OIDAuthorizationService.perform(tokenExchangeRequest) {
             tokenResponse, error in
             if let error = error {
                 showAlert(title: "Error during authorization", message: error.localizedDescription)

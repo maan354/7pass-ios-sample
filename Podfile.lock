@@ -1,0 +1,21 @@
+PODS:
+  - Alamofire (4.4.0)
+  - AppAuth (0.9.0)
+  - CryptoSwift (0.6.9)
+  - JWTDecode (2.0.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.4.0)
+  - AppAuth (~> 0.9.0)
+  - CryptoSwift (~> 0.6.9)
+  - JWTDecode (~> 2.0.0)
+
+SPEC CHECKSUMS:
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  AppAuth: 4fabb6b8068a2e61b914b41071bdbd95da2c9553
+  CryptoSwift: a22f6ba238e9ce4d26ee7bf45b9ed82e7122d4a0
+  JWTDecode: 178e47e5d28d3abcff778bacced8342858cd6cb5
+
+PODFILE CHECKSUM: 4f80b657cca17f83c8a4b60b90d1a48e7940059f
+
+COCOAPODS: 1.2.0

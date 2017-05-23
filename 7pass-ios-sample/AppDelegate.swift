@@ -8,7 +8,6 @@
 
 import UIKit
 import AppAuth
-import SevenPassSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

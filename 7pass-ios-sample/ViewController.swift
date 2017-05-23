@@ -9,7 +9,6 @@
 import UIKit
 import JWTDecode
 import AppAuth
-import SevenPassSDK
 
 class ViewController: UIViewController {
     @IBOutlet weak var refreshButton: UIBarButtonItem!
@@ -35,7 +34,7 @@ class ViewController: UIViewController {
                 additionalParameters: nil
             )
                         
-            OIDAuthorizationService.perform(tokenExchangeRequest!) {
+            OIDAuthorizationService.perform(tokenExchangeRequest) {
                 tokenResponse, error in
                 if let error = error {
                     showAlert(title: "Error during token refresh", message: error.localizedDescription)
