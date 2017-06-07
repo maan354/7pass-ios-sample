@@ -14,28 +14,28 @@ import Alamofire
 class LoginViewController: UIViewController, UITextFieldDelegate {
     let config = Configuration.shared
     var mainView: ViewController?
-    
+
     override func didMove(toParentViewController parent: UIViewController?) {
         super.didMove(toParentViewController: parent)
-        
+
         mainView = parent as? ViewController
     }
- 
+
     @IBAction func authorize(_ sender: AnyObject) {
         let issuer = URL(string: config.kIssuer)!
-        
+
         OIDAuthorizationService.discoverConfiguration(forIssuer: issuer) {
             serviceConfiguration, error in
             if let error = error {
                 showAlert(title: "Error retrieving discovery document", message: error.localizedDescription)
                 return
             }
-            
+
             let appDelegate = UIApplication.shared.delegate as! AppDelegate;
 
             appDelegate.serviceConfiguration = serviceConfiguration
-            
-            var additionalParams = [
+
+            let additionalParams = [
                 "prompt": "consent",
                 "fbapp_pres": SevenPassClient.isFacebookAppInstalled() ? "1" : "0"
             ]
@@ -44,7 +44,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 //            if let adManager = ASIdentifierManager.shared(), adManager.isAdvertisingTrackingEnabled {
 //                additionalParams["adid"] = adManager.advertisingIdentifier.uuidString
 //            }
-            
+
             let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
                 clientId: self.config.kClientId,
                 clientSecret: nil,
@@ -52,7 +52,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 redirectURL: URL(string: self.config.kRedirectURI)!,
                 responseType: OIDResponseTypeCode,
                 additionalParameters: additionalParams)
-            
+
             let coordinator = OIDAuthorizationUICoordinatorIOS(presenting: self)
             appDelegate.authorizationCoordinator = coordinator
 
@@ -67,10 +67,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
+
     func exchangeTokens(authorizationCode: String?, codeVerifier: String?) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
-        
+
         let tokenExchangeRequest = OIDTokenRequest(
             configuration: (appDelegate.authState?.lastAuthorizationResponse.request.configuration)!,
             grantType: OIDGrantTypeAuthorizationCode,
@@ -83,24 +83,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             codeVerifier: codeVerifier,
             additionalParameters: nil
             )
-        
+
         OIDAuthorizationService.perform(tokenExchangeRequest) {
             tokenResponse, error in
             if let error = error {
                 showAlert(title: "Error during authorization", message: error.localizedDescription)
             }
-            
+
             if let tokenResponse = tokenResponse {
                 appDelegate.authState?.update(with: tokenResponse, error: error)
                 self.mainView?.updateStatusbar()
             }
         }
     }
-    
+
     @IBAction func fetchUserInfo(_ sender: AnyObject? = nil) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let serviceConfiguration = appDelegate.serviceConfiguration
-        
+
         if let userinfoEndpoint = serviceConfiguration?.discoveryDocument?.userinfoEndpoint {
           get(userinfoEndpoint.absoluteString)
         } else {
