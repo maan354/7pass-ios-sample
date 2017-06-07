@@ -22,7 +22,7 @@ Once you have the credentials available, you can go ahead and open
 configuration and run it.
 
 The sample application should now start within the configured device
-(or the emulator) and should provide several tabs each implementing a
+(or the emulator) and should provide several options each implementing a
 feature you might want to use in your app.
 
 ## Usage
@@ -91,7 +91,7 @@ Once you obtain `serviceConfiguration`, you can perform the authorization call. 
 have to create `authorizationRequest`.
 
 ```swift
-// builds authentication request
+// builds an authorization request
 let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
             clientId: kClientID,
             scopes: [OIDScopeOpenID, OIDScopeProfile],
