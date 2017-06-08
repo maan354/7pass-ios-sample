@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6Ud-mc-X6k">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Web View Login-->
+        <scene sceneID="bV1-YC-XZO">
+            <objects>
+                <viewController storyboardIdentifier="webView" id="lzC-bg-seg" userLabel="Web View Login" customClass="LoginViewController" customModule="SevenPassSDK_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="k4d-hE-UNK"/>
+                        <viewControllerLayoutGuide type="bottom" id="vbM-u5-zih"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wiv-an-yYW">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="mj9-9e-sXO">
+                                <rect key="frame" x="113" y="54" width="94" height="39"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Authorize"/>
+                                <connections>
+                                    <action selector="authorize:" destination="lzC-bg-seg" eventType="touchUpInside" id="h7d-Yn-ou6"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D6n-r7-IF2">
+                                <rect key="frame" x="98" y="113" width="124" height="39"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Get UserInfo"/>
+                                <connections>
+                                    <action selector="fetchUserInfo:" destination="lzC-bg-seg" eventType="touchUpInside" id="JWc-OL-5fO"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gxY-bh-bDP">
+                                <rect key="frame" x="81" y="172" width="159" height="39"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Fetch me/optins"/>
+                                <connections>
+                                    <action selector="fetchOptins:" destination="lzC-bg-seg" eventType="touchUpInside" id="6x2-01-cXp"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="gxY-bh-bDP" firstAttribute="top" secondItem="D6n-r7-IF2" secondAttribute="bottom" constant="20" id="2kt-Di-ddg"/>
+                            <constraint firstItem="mj9-9e-sXO" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="He1-uL-zpl"/>
+                            <constraint firstItem="gxY-bh-bDP" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="MR0-4K-fxb"/>
+                            <constraint firstItem="D6n-r7-IF2" firstAttribute="centerX" secondItem="wiv-an-yYW" secondAttribute="centerX" id="N0n-uM-fZQ"/>
+                            <constraint firstItem="D6n-r7-IF2" firstAttribute="top" secondItem="mj9-9e-sXO" secondAttribute="bottom" constant="20" id="NXE-v7-sN0"/>
+                            <constraint firstItem="mj9-9e-sXO" firstAttribute="top" secondItem="k4d-hE-UNK" secondAttribute="bottom" constant="54" id="Xaa-8A-17e"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="i15-4i-aBR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1127" y="251"/>
+        </scene>
+        <!--Main View-->
+        <scene sceneID="dll-eS-ppK">
+            <objects>
+                <viewController id="6Ud-mc-X6k" userLabel="Main View" customClass="ViewController" customModule="SevenPassSDK_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="nU8-jI-lFg"/>
+                        <viewControllerLayoutGuide type="bottom" id="aFK-U2-2IQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dF9-2U-RjX">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lzn-Th-Aar">
+                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                <items>
+                                    <barButtonItem enabled="NO" style="plain" id="flI-Ut-GID">
+                                        <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="bfR-ew-sf3"/>
+                                    <barButtonItem enabled="NO" title="Refresh" id="LGp-Qe-Ocm">
+                                        <connections>
+                                            <action selector="refresh:" destination="6Ud-mc-X6k" id="PRX-u2-shk"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem enabled="NO" title="Logout" style="done" id="yyM-qo-h3L">
+                                        <connections>
+                                            <action selector="logout:" destination="6Ud-mc-X6k" id="max-jF-Uor"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2QG-0n-jwY">
+                                <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                                <connections>
+                                    <segue destination="lzC-bg-seg" kind="embed" id="T7K-eR-84f"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="2QG-0n-jwY" firstAttribute="centerX" secondItem="dF9-2U-RjX" secondAttribute="centerX" id="0SM-sV-Mbe"/>
+                            <constraint firstItem="Lzn-Th-Aar" firstAttribute="top" secondItem="nU8-jI-lFg" secondAttribute="bottom" id="5eh-yP-b1a"/>
+                            <constraint firstItem="2QG-0n-jwY" firstAttribute="width" secondItem="dF9-2U-RjX" secondAttribute="width" id="Ldh-dy-kmw"/>
+                            <constraint firstItem="2QG-0n-jwY" firstAttribute="top" secondItem="Lzn-Th-Aar" secondAttribute="bottom" id="dOP-5Y-3WZ"/>
+                            <constraint firstItem="Lzn-Th-Aar" firstAttribute="width" secondItem="dF9-2U-RjX" secondAttribute="width" id="ugb-Mz-HYM"/>
+                            <constraint firstItem="Lzn-Th-Aar" firstAttribute="centerX" secondItem="dF9-2U-RjX" secondAttribute="centerX" id="viL-DZ-GZG"/>
+                            <constraint firstItem="aFK-U2-2IQ" firstAttribute="top" secondItem="2QG-0n-jwY" secondAttribute="bottom" id="zhW-aK-8Ck"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="logoutButton" destination="yyM-qo-h3L" id="hew-cf-Dk1"/>
+                        <outlet property="refreshButton" destination="LGp-Qe-Ocm" id="hy5-Yk-bLg"/>
+                        <outlet property="statusbar" destination="flI-Ut-GID" id="8JG-kv-LVr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="emw-19-cAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="305.79710144927537" y="250.27173913043481"/>
+        </scene>
+    </scenes>
+</document>

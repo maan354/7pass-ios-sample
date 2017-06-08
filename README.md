@@ -1,52 +1,28 @@
-# 7pass-ios-sdk
+# 7pass-ios-sample
 
-7Pass iOS SDK is a Swift library for interacting with the
-[7Pass SSO service](https://7pass.de). You can use this library to
-implement authentication for your app and take advantage of the
-already existing features that 7Pass SSO offers.
+7Pass iOS Sample is a Swift project to demonstrate how to access
+[7Pass SSO service](https://7pass.de) using tokens obtained by [AppAuth](https://github.com/openid/AppAuth-iOS).
 
 ## Usage
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+To run the example project, clone the repo, and run `pod install` first.
 
-## Installation
+## Running
 
-SevenPassSDK is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
-```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-
-use_frameworks!
-
-target 'MyApp' do
-  pod 'SevenPassSDK'
-end
-```
-
-## Running the sample application
-
-To demonstrate the functionality of the library, there's a sample
-application available. The application is configured to run against
-the QA instance of 7Pass and uses test credentials
-(Example/SevenPassSDK/SsoManager.swift). Feel free to use these credentials
-while testing but you need to obtain real credentials before releasing
-your app.
+Sample application is configured to run against the QA instance of 7Pass and
+uses test credentials (7pass-ios-sample/Configuration.swift). Feel free to use
+these credentials while testing but you need to obtain real credentials before
+releasing your app.
 
 To obtain the real credentials, you first need to contact the 7Pass
 Tech Team.
 
-Once you have the credentials available, you can go ahead and type
-
-```
-pod install
-```
-
-in `Example` directory, open `SevenPassSDK.xcworkspace` project in XCode,
-select `SevenPassSDK-Example` build configuration and run it.
+Once you have the credentials available, you can go ahead and open
+`7pass-ios-sample.xcworkspace` project in XCode, select `7pass-ios-sample` build
+configuration and run it.
 
 The sample application should now start within the configured device
-(or the emulator) and should provide several tabs each implementing a
+(or the emulator) and should provide several options each implementing a
 feature you might want to use in your app.
 
 ## Usage
@@ -59,421 +35,214 @@ against a non live instance of the 7Pass SSO service. In this case,
 we'll use the QA environment. Don't forget to switch to the production
 one before you release your application to the public.
 
-First, let's initialize the library with sample configuration:
+Info about retrieving tokens can be found in the [AppAuth GitHub repo](https://github.com/openid/AppAuth-iOS).
+
+First, let's set some configuration constants and discover 7Pass service:
 
 ```swift
-let configuration = SevenPassConfiguration(
-    consumerKey: "56a0982fcd8fb606d000b233",
-    consumerSecret: "2e7b77f99be28d80a60e9a2d2c664835ef2e02c05bf929f60450c87c15a59992",
-    callbackUri: "oauthtest://oauth-callback",
-    environment: "qa"
+let kIssuer = "https://sso.qa.7pass.ctf.prosiebensat1.com"
+let kClientId = "56a0982fcd8fb606d000b233"
+let kClientSecret = "2e7b77f99be28d80a60e9a2d2c664835ef2e02c05bf929f60450c87c15a59992"
+let kRedirectURI = "oauthtest://oauth-callback"
 )
 
-let sso = SevenPass(configuration: configuration)
+let issuer = URL(string: kIssuer)
+
+OIDAuthorizationService.discoverConfiguration(forIssuer: issuer!) {
+    serviceConfiguration, error in
+
+    if serviceConfiguration == nil {
+        self.logMessage(message: "Error retrieving discovery document: \(error?.localizedDescription)")
+        return
+    }
+
+    // perform authorization request with serviceConfiguration
+}
 ```
 
-## Authentication flow
+## How to start authentication request
 
-The library offers several ways of logging in the user. The result of
-every login is eventually an instance of `TokenSet`. A `TokenSet`
-represents the three different token types the server will return:
+### AppDelegate
+
+AppDelegate is the "heart of the application" and among the other things you can
+store there `currentAuthorizationFlow` and `authState`.
+
+```swift
+var currentAuthorizationFlow: OIDAuthorizationFlowSession?
+var authState: OIDAuthState?
+```
+
+It also handles inbound urls from outer world. Such url can be the `redirectURL` with _authorization flow_ specific parameters.
+
+```swift
+func application(_ app: UIApplication, open url: URL, options:  [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+    // Sends the URL to the current authorization flow (if any) which will process it if it relates to
+    // an authorization response.
+    if let currentAuthorizationFlow = currentAuthorizationFlow, currentAuthorizationFlow.resumeAuthorizationFlow(with: url) {
+        self.currentAuthorizationFlow = nil
+        return true
+    }
+    return false;
+}
+```
+
+### Main controller
+Once you obtain `serviceConfiguration`, you can perform the authorization call. First you
+have to create `authorizationRequest`.
+
+```swift
+// builds an authorization request
+let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
+            clientId: kClientID,
+            scopes: [OIDScopeOpenID, OIDScopeProfile],
+            redirectURL: NSURL(string: kRedirectURI),
+            responseType: OIDResponseTypeCode,
+            additionalParameters: nil
+);
+```
+
+If you later want to use refresh token you need to provide `offline_access` scope in addition together
+with `consent` prompt. Prompt, as well as another custom parameters, can be set using the `additionalParameters`
+parameter.
+
+```swift
+var additionalParams = [String: String]()
+additionalParams["prompt"] = "consent"
+additionalParams["utm_campaign"] = "a23_45"
+```
+
+Then perform authentication request. The result of the authentication request is stored in the `authorizationResponse` object
+which is then used to create `authState` object which retains the state between `OIDAuthorizationResponse`s and `OIDTokenResponse`s.
+
+```swift
+ appDelegate.currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, presenting: self) {
+    authorizationResponse, error in
+    if authorizationResponse != nil {
+        // update authState
+        self.authState = OIDAuthState(authorizationResponse: authorizationResponse!)
+    }
+}
+```
+
+Once you have the `authorizationResponse` you can perform the token exchange request.
+
+```swift
+ let tokenExchangeRequest = OIDTokenRequest(
+     configuration: (self.authState?.lastAuthorizationResponse.request.configuration)!,
+     grantType: OIDGrantTypeAuthorizationCode,
+     authorizationCode: self.authState?.lastAuthorizationResponse.authorizationCode,
+     redirectURL: URL(string: kRedirectURI)!,
+     clientID: kClientId,
+     clientSecret: kClientSecret,
+     scope: nil,
+     refreshToken: nil,
+     codeVerifier: nil,
+     additionalParameters: nil
+ )
+
+ OIDAuthorizationService.perform(tokenExchangeRequest!) {
+   tokenResponse, error in
+     if tokenResponse != nil {
+        self.authState?.update(with: tokenResponse, error: error)
+        // perform authorized api call
+     }
+ }
+```
+
+In `tokenResponse` you will get few of following tokens that are stored in the
+`authState`:
 
 1. *Access token* - This token proofs the identity of the user and is
-thus included in almost every remote call the library
-performs. Every access token is valid just for 2 hours. In cannot
-be used after that.
+thus included in almost every remote call the library performs. Every access
+token has limited validity.
 
-2. *Refresh token* - This token can be used to get a new `TokenSet`
-with a fresh access token. Its expiration time is set to 90 days
-and its prolonged every time you use it. If however the token
-expired, you need to ask the user to login again.
+2. *Refresh token* - This token can be used to get a fresh access token.
 
 3. *ID token* - This token contains information (claims) about the
 logged in user. You can for example get the user's ID, name, email
 etc.
 
-You don't generally need to worry about the current `TokenSet` and how
-it's used but you need to make sure it's valid before use:
+## How to make authorized API calls
+
+The recommend way how to make API calls is to use provided `SevenPassClient`
+helper class.
 
 ```swift
-sso.authorize(
-    scopes: ["openid", "profile", "email"],
-    success: { tokenSet in
-        // tokenSet.accessToken?.isExpired()
-        // tokenSet.refreshToken?.isExpired()
-    },
-    failure: { error in
-        print(error.localizedDescription)
+let accountClient = SevenPassClient(authState: authState);
+
+accountClient.get("/me") { response in
+    switch response.result {
+    case .success:
+        let JSON = response.result.value
+        print(JSON)
+    case .failure(let error):
     }
-)
-```
-
-If that access token is fresh, you can use the token set to perform API
-calls. After that, you can use that TokenSet to initialize an API client:
-
-```swift
-let accountClient = sso.accountClient(tokenSet)
-```
-
-Otherwise, you need to refresh it, using a refresh token.
-
-```swift
-let refreshTokenString = tokenSet.refreshToken!.token
-
-sso.authorize(refreshToken: refreshTokenString,
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
-```
-
-Of course, you need to make sure that the refresh token itself is
-fresh. If it's not, you cannot get a fresh access token and need to
-ask the user to log in again. If you're using the Web view flow and
-the user has an active session on 7Pass, chances are he/she will come
-back immediately without having to fill in the credentials.
-
-Since the same token set can be used in the span of multiple days, you
-should store it instead of forcing the user to re-login every
-time. There's a utility class you can use to save the token set
-into the keychain.
-
-```swift
-let tokenSetCache = SevenPassTokenSetCache(configuration: sso.configuration)
-
-// Load token set from a keychain
-let tokenSet = tokenSetCache.load()
-
-// Store token set in the keychain
-tokenSetCache.tokenSet = tokenSet
-tokenSetCache.save()
-
-// Delete token set
-tokenSetCache.delete()
-```
-
-### 1. Logging in using Web view
-
-The most basic way of logging in the user is using the Web view.
-
-```swift
-sso.authorize(
-    scopes: ["openid", "profile", "email"],
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
-```
-
-The code will open the provided Web view which will navigate to the
-7Pass's login dialog. From there, the user has several options, he/she
-can use his/her credentials directly or use Google/Facebook.
-
-Once the process is done, the web view will automatically close and
-the result will be provided in the callback.
-
-Once the process is successfully finished, we can use the obtained
-`tokenSet` to instantiate API client.
-
-### 2. Logging in using login and password
-
-In case you want to provide more native experience for the user, the
-library offers logging in using the user's 7Pass login and
-password (grant_type = password). This way, you get to design the login
-form yourself using the iOS widgets.
-
-```swift
-sso.authorize(
-    login: login.text!,
-    password: password.text!,
-    scopes: ["openid", "profile", "email"],
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
-```
-
-### 3. Logging in using social
-
-In situations when the user is already logged in using some other
-service (currently supported services are Facebook or Google), you can
-use the `social` flow.
-
-In this flow, you provide an access token you've received from the other service
-and 7Pass will make sure to create a new 7Pass account (with all of the user
-details) or identify an existing 7Pass account.
-
-```swift
-sso.authorize(
-    providerName: "facebook",
-    accessToken: "foobarbaz",
-    scopes: ["openid", "profile", "email"],
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
-```
-
-### 4. Autologin
-
-In case, that you already have valid `TokenSet` (fe. from password or social login) or a valid `autologin_token` and you want to create user session in the WebView, you can utilize `autologin` method.
-
-By default this method sets `response_type = "none"`
-
-### 5. Logging out
-
-In the app's perspective, a user is logged in when you have a fresh
-`TokenSet`. In order to log the user out, all that's required is to
-"forget" the tokens. Optionally, you can destroy the user's session in WebView as well.
-
-To use it, just call
-
-```swift
-sso.destroyWebviewSession(failure: errorHandler)
-```
-
-### Handling interaction_required error
-
-It's important to note that if the user hasn't accepted all of the necessary consents for the client or the service the client belongs to, the login through Username & Password or Social method might fail and it's necessary to handle this situation in your error handling callback.
-
-```swift
-func errorHandler(error: NSError) {
-    // Let autologin handle interaction_required errors
-    if let errorMessage = error.userInfo["error"] as? String where errorMessage == "interaction_required" {
-        let autologinToken = error.userInfo["autologin_token"] as! String
-
-        self.sso.autologin(
-            autologinToken: autologinToken,
-            scopes: ["openid", "profile", "email"],
-            params: ["response_type": "id_token+token"],
-            success: { tokenSet in
-                // Do some stuff
-            },
-            failure: errorHandler
-        )
-    }
-
-    // Handle other errors
 }
 ```
 
-##### Login using valid tokenSet
+## How to logout
 
-TokenSet has to include valid `access_token` and `id_token`
+You can use `SevenPassClient.logout` class method that will revoke all of the tokens
+and destroy user session in the WebView. After that, just toss your `authState` away.
 
 ```swift
-sso.autologin(tokenSet,
-    scopes: ["openid", "profile", "email"],
-    rememberMe: false,
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
+SevenPassClient.logout(clientId: kClientId, postLogoutRedirectUri: kRedirectURI, presenting: self, authState: authState)
 ```
 
-##### Login using autologin token
+## Facebook login with native app
 
-Used for example when `interaction_required` error is returned from the server.
+User can be signed in through native Facebook app instead of an WebView.
 
-```swift
-sso.autologin(
-    autologinToken: "AUTOLOGINTOKEN",
-    scopes: ["openid", "profile", "email"],
-    params: ["response_type": "id_token+token"],
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
+Add `fbauth2` to your `LSApplicationQueriesSchemes` in your `Info.plist`
+```xml
+<key>LSApplicationQueriesSchemes</key>
+<array>
+        <string>fbauth2</string>
+</array>
 ```
 
-## Account client
-
-Now that you have an account's `TokenSet`, you can already identify the user and
-proceed to your actual app. You can, however, request further details about the
-user. Each method call corresponds to an endpoint available on 7Pass, you're
-encouraged to go through the
-[documentation](http://guide.docs.7pass.ctf.prosiebensat1.com/api/index.html?focusTabs=node#api-Accounts).
+After that, add `fbYOUR_FACEBOOK_APP_ID` into your URL types, fe. `fb734789116545825`.
+Edit your authorization, so it sends info about if the `Facebook.app` is available
+on user's device.
 
 ```swift
-let accountClient = sso.accountClient(tokenSet)
+let additionalParams = [
+    "fbapp_pres": SevenPassClient.isFacebookAppInstalled() ? "1" : "0"
+]
+
+let authorizationRequest = OIDAuthorizationRequest(configuration: serviceConfiguration!,
+            clientId: kClientID,
+            scopes: [OIDScopeOpenID, OIDScopeProfile],
+            redirectURL: NSURL(string: kRedirectURI),
+            responseType: OIDResponseTypeCode,
+            additionalParameters: additionalParams
 ```
 
-### Getting the account's details
-
-The simplest remote call you can make is to request [the account's
-details](http://guide.docs.7pass.ctf.prosiebensat1.com/api/index.html?focusTabs=node#api-Accounts-GetAccount).
+That authorization request has to be presented with custom `OIDAuthorizationUICoordinator`,
+please save reference to that coordinator for later use, when we will initiate callback
+with Facebook authorization code to 7Pass.
 
 ```swift
-accountClient.get("me",
-    success: { json, response in
-        print(json)
-    },
-    failure: errorHandler
-)
+let coordinator = OIDAuthorizationUICoordinatorIOS(presenting: self)
+
+currentAuthorizationFlow = OIDAuthorizationService.present(authorizationRequest, uiCoordinator: coordinator) {
+    authorizationResponse, error in
+}
 ```
 
-Note that you might not need to request the additional user details as the most
-basic ones are already present in the ID Token as part of the `TokenSet`. It
-generally depends on your app's requirements.
+And in your `AppDelegate` URL open handler add following to handle redirect from Facebook:
 
 ```swift
-tokenSet.idTokenDecoded
-```
+if let urlScheme = url.scheme, urlScheme.hasPrefix("fb\(config.kFacebookAppId)"),
+   let coordinator = authorizationCoordinator,
+   let flow = currentAuthorizationFlow {
 
-### Refreshing accountClient TokenSet
+    SevenPassClient.fbCallback(config.kExternalCallbackURL, coordinator: coordinator, flow: flow, url: url)
 
-Account client is an instance of `SevenPassRefreshingClient` which handles refreshing of the tokens for you seamlessly.
-
-Optionally callback can be supplied as an argument to `accountClient` method:
-
-```swift
-let accountClient = sso.accountClient(
-  tokenSet,
-  tokenSetUpdated: { tokenSet in
-    // Save new tokens
-    tokenSetCache.tokenSet = tokenSet
-    tokenSetCache.save()
-  }
-)
-```
-
-## Credentials client
-
-A credentials client can be used to perform various administrative tasks not
-bound to a particular account. For example, you can verify whether an email
-address is unused or whether a password is of sufficient quality and others.
-Getting this kind of client doesn't require any interaction from the user, it's
-issued based on your client's credentials.
-
-Same as with the Account client you will receive a valid `TokenSet`, however,
-the token set will not contain anything but an access token and its validity
-will be limited to just 15 minutes. Since the token set doesn't have a Refresh
-token, it's necessary to request a new one after the 15 minutes have passed if
-required.
-
-```swift
-sso.authorize(
-    parameters: [
-        "grant_type": "client_credentials",
-    ],
-    success: { tokenSet in
-        // Do some stuff
-    },
-    failure: errorHandler
-)
-```
-
-Once you have the token set available, you can get the Credentials client and
-invoke the available methods.
-
-```swift
-let credentialsClient = sso.credentialsClient(tokenSet)
-```
-
-### Checking an email's availability
-
-Validates the provided email address and returns whether it's available for use.
-You can use this method to give immediate feedback to users (i.e. during a
-registration process). See more information in [the
-documentation](http://guide.docs.7pass.ctf.prosiebensat1.com/api/#api-Emails-ActionCheckMail).
-
-```swift
-deviceClient.post("checkMail",
-    parameters: [
-        "email": login.text!,
-        "flags": [
-            "client_id": sso.configuration.consumerKey
-        ]
-    ],
-    success: { json, response in
-        if let error = json["data"]?["error"] as? String {
-           // E-Mail is invalid
-        }
-    },
-    failure: errorHandler
-)
-```
-
-The response also contains a suggested email address so that you can easily
-provide the "did you mean x?" functionality in case the user has made a typo in
-the address.
-
-### Checking a password's validity
-
-As a next step in a registration form you might want to provide a feedback
-regarding the validity of the provided password. You can find all of the
-requirements and the response codes in [the
-documentation](http://guide.docs.7pass.ctf.prosiebensat1.com/api/#api-Accounts-ActionCheckPassword).
-
-```swift
-deviceClient.post("checkPassword",
-    parameters: [
-        "password": password.text!
-    ],
-    success: { json, response in
-        if let errors = json["data"]?["errors"] as? [String] {
-            // Password is not valid, got array of errors
-        }
-    },
-    failure: errorHandler
-)
-```
-
-### Creating a new account
-
-Finally, you can create a brand you account directly. The only mandatory
-parameter is a valid email address and a password. If you don't want to force
-your users to type in the password, you can request an auto generated password
-(in which case only the email address is required).
-
-```swift
-deviceClient.post("registration",
-    parameters: [
-        "email": login.text!,
-        "password": password.text!,
-        "flags": [
-            "client": [
-                "id": sso.configuration.consumerKey, // Associate with a service
-                "agb": true, // Accept ToS consents (user should given permissions beforehand)
-                "dsb": true, // Accept privacy policy consents (user should given permissions beforehand)
-                "implicit": true // Accept implicit optins
-            ]
-        ]
-    ],
-    success: { json, response in
-        // Account creation status returned in json constant
-    },
-    failure: errorHandler
-)
-```
-
-## Advanced usage
-
-### Customize WebView
-
-Create your own custom class implemeting `SevenPassURLHandlerType` protocol and pass that instance to `SevenPass` init.
-
-```swift
-let sso = SevenPass(configuration: configuration, urlHandler: YourWebViewController())
-```
-
-## Developers
-
-### OAuthSwift custom fork
-
-This library comes bundled with custom fork of OAuthSwift library, that can be downloaded and builded using
-[Carthage](https://github.com/Carthage/Carthage), to rebuild it, run:
-
-```swift
-carthage update --platform iOS
+    return true
+}
 ```
 
 ## License
 
-SevenPassSDK is available under the MIT license. See the LICENSE file for more info.
+7pass-ios-sample is available under the MIT license. See the LICENSE file for more info.
